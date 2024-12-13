@@ -1,28 +1,26 @@
-# Eliza Deployment Guide
+# Eliza on a DO Droplet
 
-A production-ready deployment guide for the [Eliza](https://github.com/ai16z/eliza) chatbot.
+Disclaimer: This is a super alpha, not ready for actual production.
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/yourusername/eliza-deploy.git
+git clone https://github.com/bealers/eliza-remote.git
 cd eliza-deploy
 ./install.sh
 ```
 
 ## Prerequisites
 
-- Ubuntu 24.04 LTS
-- Root access
-- SSH key authentication
+- Digital Ocean Droplet with the latest Ubuntu LTS (currently 24.04)
+- The droplet is provisioned with an ssh key that you have control over
 
 ## Features
 
 - [x] Systemd service management
 - [x] Log rotation
 - [x] Security hardening
-- [x] Multi-user support
-- [x] Custom character support
+- [] Custom character support
 
 ## Installation Options
 
@@ -31,7 +29,7 @@ cd eliza-deploy
 ./install.sh
 ```
 
-### Custom Character Install
+### Custom Character Install TODO - DOES NOT WORK YET
 ```bash
 export ELIZA_CHARACTER=/path/to/character.json
 ./install.sh
