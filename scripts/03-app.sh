@@ -1,19 +1,11 @@
 #!/bin/bash
 
 echo "Installing application dependencies..."
-apt-get -q -y install python3 python3-pip ffmpeg > /dev/null
 
-# Setup directories
-mkdir -p "${INSTALL_DIR}"
-chown "${SERVICE_USER}:${SERVICE_USER}" "${INSTALL_DIR}"
+apt-get -q -y install python3 python3-pip ffmpeg > /dev/null
 
 # Switch to service user for installation
 su - "${SERVICE_USER}" <<EOF
-# Clone repository
-git clone ${AGENT_REPO} ${INSTALL_DIR}
-cd ${INSTALL_DIR}
-git checkout \$(git describe --tags --abbrev=0)
-
 # Install NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
@@ -28,6 +20,12 @@ nvm use default
 
 # Install pnpm
 npm install -g pnpm
+
+# Clone repository
+cd \$HOME
+rm -rf * .[!.]* ..?*  # Clean directory except . and ..
+git clone ${AGENT_REPO} .  # Clone into current directory
+git checkout \$(git describe --tags --abbrev=0)
 
 # Install dependencies
 pnpm install

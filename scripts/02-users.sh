@@ -18,6 +18,7 @@ echo "$USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USER
 
 ## bash tweaks
 cat > /home/$USER/.bashrc << 'EOL'
+#!/bin/bash
 export EDITOR=vim # sue me
 alias ls='ls --color=auto -Fhla --group-directories-first'
 EOL
@@ -31,6 +32,7 @@ fi
 
 # Setup service user's home
 cat > "${INSTALL_DIR}/.bashrc" << 'EOL'
+#!/bin/bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # Load NVM
 export PATH="$HOME/node_modules/.bin:$PATH"
