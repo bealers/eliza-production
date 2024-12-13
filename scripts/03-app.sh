@@ -1,6 +1,6 @@
 #!/bin/bash
 
-output "Installing application dependencies..."
+echo "Installing application dependencies..."
 apt-get -q -y install python3 python3-pip ffmpeg > /dev/null
 
 # Setup directories
@@ -91,4 +91,4 @@ systemctl daemon-reload
 systemctl enable eliza
 systemctl start eliza
 
-output "Eliza service installed and started"
+echo "Eliza service installed and started"

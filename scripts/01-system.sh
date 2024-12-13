@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Update system packages quietly
-output "Updating system packages..."
-
+echo "Updating system packages..."
 apt-get -qq update
 apt-get -qq -y upgrade
 
@@ -19,7 +18,7 @@ apt-get -q -y install \
 ufw default deny incoming
 ufw default allow outgoing
 
-#ufw allow 3000/tcp  # API port
+#ufw allow 3000/tcp  # API port?
 #TODO, On by default? make a setting/UI flag?
 
 ufw allow 22/tcp
@@ -34,4 +33,4 @@ timedatectl set-timezone Europe/London
 locale-gen en_GB.UTF-8 > /dev/null
 update-locale LANG=en_GB.UTF-8
 
-output "System setup completed"
+echo "System setup completed"

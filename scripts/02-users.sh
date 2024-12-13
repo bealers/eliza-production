@@ -4,7 +4,6 @@
 
 if ! id "$USER" &>/dev/null; then
     useradd -m -s /bin/bash "$USER"
-    usermod -aG sudo "$USER"
 fi
 
 ## ssh (using your ssh key that DO added for you)
@@ -14,7 +13,7 @@ chown -R $USER:$USER /home/$USER/.ssh
 chmod 700 /home/$USER/.ssh
 chmod 600 /home/$USER/.ssh/authorized_keys
 
-## sudo
+## sudo for you
 echo "$USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USER
 
 ## bash tweaks
@@ -29,8 +28,8 @@ if ! id "$SERVICE_USER" &>/dev/null; then
     useradd -r -m -s /bin/bash $SERVICE_USER
 fi
 
-# TODO: Optional security hardening
-# WARNING: This will probably break default Digital Ocean root access methods
+# TODO: Opsec hardening
+# WARNING: This will very likely break default Digital Ocean access methods
 #
 # echo "PermitRootLogin no" >> /etc/ssh/sshd_config
 # echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
