@@ -1,75 +1,120 @@
-# [Eliza](https://github.com/ai16z/eliza) Chatbot Setup Guide
+# Eliza Deployment Guide
 
-This guide will walk you through the installation and setup of the Eliza chatbot on a Debian-based WSL (Windows Subsystem for Linux) system or bare metal Debian install.
+A production-ready deployment guide for the [Eliza](https://github.com/ai16z/eliza) chatbot.
+
+## Quick Start
+
+```bash
+git clone https://github.com/yourusername/eliza-deploy.git
+cd eliza-deploy
+./install.sh
+```
 
 ## Prerequisites
 
-- **WSL 2 (Windows Subsystem for Linux)** capable Windows machine. https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi
-- **Debian** distribution on bare metal.
+- Ubuntu 24.04 LTS
+- Root access
+- SSH key authentication
 
-## Installation Steps
+## Features
 
-1. **Open Command Prompt** and install Debian on WSL by running the following command:
-     (Skip this if you are running Debian bare metal)
-   ```bash
-   wsl --install -d debian
-   ```
+- [x] Systemd service management
+- [x] Log rotation
+- [x] Security hardening
+- [x] Multi-user support
+- [x] Custom character support
 
-2. **Once the installation is complete and Debian boots up, become the root user**:
-   ```bash
-   sudo su
-   ```
+## Installation Options
 
-3. **Clone and run the setup**:
-   ```bash
-   cd ~
-   apt install -y git
-   git clone https://github.com/HowieDuhzit/Eliza-Installer.git
-   cd Eliza-Installer
-   chmod +x setup.sh
-   ./setup.sh
-   ```
-   
-   This will install all necessary dependencies and prompt you to name your character, edit the ENV file, create a character file and then run the rest of the install loading the default character.
+### Standard Install
+```bash
+./install.sh
+```
 
-4. **Exit the bot**:
-   ```bash
-   exit
-   ```
+### Custom Character Install
+```bash
+export ELIZA_CHARACTER=/path/to/character.json
+./install.sh
+```
 
-5. **Navigate into the Eliza directory**:
-    ```bash
-    cd eliza
-    export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-    pnpm start --characters="characters/YOUR_CHARACTER.character.json"
-    ```
+## Post-Installation
 
-    This will start the Eliza chatbot using your customized character.
+1. Configure `.env` file:
+```bash
+sudo vi /opt/eliza/.env
+```
 
-## Additional Notes
+2. Start the service:
+```bash
+sudo systemctl start eliza
+```
 
-- If you need to make further customizations, you can modify the `.env` file and the individual character JSON files located in `~/Eliza-Installer/eliza/characters/`.
-- To stop the Eliza chatbot, type `exit` in the terminal.
+## Maintenance
+
+### Updates
+```bash
+sudo systemctl stop eliza
+cd /opt/eliza
+sudo -u eliza git pull
+sudo -u eliza git checkout $(git describe --tags --abbrev=0)
+sudo -u eliza pnpm install
+sudo systemctl start eliza
+```
+
+### Logs
+- Application: `/var/log/eliza/eliza.log`
+- Errors: `/var/log/eliza/eliza-error.log`
+- Installation: `/var/log/eliza/install.log`
+
+### Service Control
+```bash
+sudo systemctl {start|stop|restart|status} eliza
+sudo journalctl -u eliza -f
+```
+
+## Security
+
+- Dedicated service user
+- Systemd security policies
+- Restricted file permissions
+- UFW firewall configuration
+
+### Optional Hardening
+The installation includes commented instructions for:
+- Disabling root SSH access
+- Disabling password authentication
+- Locking root account
+
+**Note:** Enabling these will break default Digital Ocean root access methods.
+See `scripts/02-users.sh` for details.
 
 ## Troubleshooting
 
-- If you encounter issues with `pnpm`, make sure all dependencies are installed correctly. You can install `pnpm` globally by running:
-  ```bash
-  npm install -g pnpm
-  ```
+1. Check service status:
+```bash
+sudo systemctl status eliza
+```
 
-## Contributing
+2. View logs:
+```bash
+sudo journalctl -u eliza -f
+```
 
-Feel free to contribute to this project by opening issues or submitting pull requests to improve the Eliza chatbot or this installation guide.
+3. Verify permissions:
+```bash
+ls -la /opt/eliza
+ls -la /var/log/eliza
+```
+
+## Development
+
+### TODO
+- [ ] Configuration UI
+- [ ] Backup/restore functionality
+- [ ] Monitoring integration
+- [ ] SSL/TLS automation
+- [ ] Multi-character management UI
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
-
-### Key Sections in the `README.md`:
-- **Installation Instructions**: Clear, step-by-step guide for setting up the Eliza chatbot on a Debian-based WSL system.
-- **Customizing the Character**: Describes how to edit the `.env` configuration file and customize the character's JSON file.
-- **Starting the Chatbot**: A simple command to run the chatbot with a custom character.
-- **Troubleshooting**: Provides information about potential issues and how to resolve them.
+MIT License - see LICENSE file
