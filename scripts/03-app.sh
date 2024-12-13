@@ -11,23 +11,35 @@ set -e  # Exit on any error
 echo "Installing NVM..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
-# Ensure NVM is loaded
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+# Need to source NVM directly from the file since this is a new shell
+export NVM_DIR="\$HOME/.nvm"
+[ -s "\$NVM_DIR/nvm.sh" ] && source "\$NVM_DIR/nvm.sh"  # This loads nvm
+
+# Verify NVM is working
+command -v nvm
 
 echo "Installing Node.js..."
+. \$HOME/.nvm/nvm.sh  # Make extra sure NVM is loaded
 nvm install v${NODE_VERSION}
 nvm alias default v${NODE_VERSION}
 nvm use default
 
+# Verify Node is working
+node --version
+npm --version
+
 echo "Installing pnpm..."
+. \$HOME/.nvm/nvm.sh  # Source again to be sure
 npm install -g pnpm
 
+# Verify pnpm is installed
+pnpm --version
+
 echo "Cloning repository..."
-cd $HOME
+cd \$HOME
 rm -rf * .[!.]* ..?*  # Clean directory except . and ..
 git clone ${AGENT_REPO} .
-git checkout $(git describe --tags --abbrev=0)
+git checkout \$(git describe --tags --abbrev=0)
 
 echo "Installing dependencies..."
 pnpm install
