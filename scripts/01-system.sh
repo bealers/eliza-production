@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # Update system packages quietly
-apt-get -qq update > /dev/null
-apt-get -qq -y upgrade > /dev/null
+output "Updating system packages..."
 
-# Install required packages
+apt-get -q update
+apt-get -q -y upgrade
+
 apt-get -q -y install \
     vim \
     curl \
@@ -12,7 +13,7 @@ apt-get -q -y install \
     unzip \
     zip \
     ntp \
-    ufw > /dev/null
+    ufw
 
 # Configure firewall
 ufw default deny incoming
@@ -27,7 +28,7 @@ ufw allow 443/tcp
 
 ufw --force enable
 
-# Locale setup (so your agent's environment matches yours, adjust to suit)
+# Locale setup (so your agent's environment matches yours; adjust to suit)
 # TODO: make a setting/UI flag for this?
 timedatectl set-timezone Europe/London
 locale-gen en_GB.UTF-8 > /dev/null

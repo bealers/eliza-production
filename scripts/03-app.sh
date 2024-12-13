@@ -3,24 +3,21 @@
 output "Installing application dependencies..."
 apt-get -q -y install python3 python3-pip ffmpeg > /dev/null
 
-mkdir -p $INSTALL_DIR/{data,config,characters}
-mkdir -p $LOG_DIR
-chown -R $SERVICE_USER:$SERVICE_USER $INSTALL_DIR $LOG_DIR
-chmod 755 $INSTALL_DIR
-chmod 750 $LOG_DIR
+# Setup directories
+mkdir -p "${INSTALL_DIR}"/{data,config,characters}
+mkdir -p "${LOG_DIR}"
+chown -R "${SERVICE_USER}:${SERVICE_USER}" "${INSTALL_DIR}" "${LOG_DIR}"
+chmod 755 "${INSTALL_DIR}"
+chmod 750 "${LOG_DIR}"
 
 # Switch to service user for installation
-su - $SERVICE_USER <<'EOF'
-export NVM_VERSION="${NVM_VERSION}"
-export NODE_VERSION="${NODE_VERSION}"
-export AGENT_REPO="${AGENT_REPO}"
-export INSTALL_DIR="${INSTALL_DIR}"
+su - "${SERVICE_USER}" <<EOF
 # Install NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
 # Load NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+export NVM_DIR="\$HOME/.nvm"
+[ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
 
 # Install Node.js
 nvm install ${NODE_VERSION}
@@ -31,23 +28,22 @@ nvm use default
 npm install -g pnpm
 
 # Clone repository
-cd $INSTALL_DIR
-git clone $AGENT_REPO .
-git checkout $(git describe --tags --abbrev=0)
+cd ${INSTALL_DIR}
+git clone ${AGENT_REPO} .
+git checkout \$(git describe --tags --abbrev=0)
 
-# Setup environment with platform configs
+# Setup environment
 cp .env.example .env
-# TODO: Configure platform-specific settings in .env
 
-# Install dependencies including platform SDKs
+# Install dependencies
 pnpm install
 
-# Setup default character and memory
+# Setup default character
 cp characters/eliza.character.json characters/default.character.json
 mkdir -p data/memory/default
 EOF
 
-# Setup systemd service with enhanced security
+# systemd
 cat > /etc/systemd/system/eliza.service <<EOL
 [Unit]
 Description=Eliza AI Chat Agent
