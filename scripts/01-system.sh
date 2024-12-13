@@ -3,8 +3,8 @@
 # Update system packages quietly
 output "Updating system packages..."
 
-apt-get -q update
-apt-get -q -y upgrade
+apt-get -qq update
+apt-get -qq -y upgrade
 
 apt-get -q -y install \
     vim \

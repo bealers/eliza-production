@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Maintenance user
+# Maintenance user (you)
 
 if ! id "$USER" &>/dev/null; then
     useradd -m -s /bin/bash "$USER"
@@ -25,11 +25,12 @@ EOL
 chown $USER:$USER /home/$USER/.bashrc
 
 # Service user
-useradd -r -m -s /bin/bash $SERVICE_USER
+if ! id "$SERVICE_USER" &>/dev/null; then
+    useradd -r -m -s /bin/bash $SERVICE_USER
+fi
 
 # TODO: Optional security hardening
-# WARNING: This will probably break default Digital Ocean root access
-# Uncomment these lines only if you're sure about your user access
+# WARNING: This will probably break default Digital Ocean root access methods
 #
 # echo "PermitRootLogin no" >> /etc/ssh/sshd_config
 # echo "PasswordAuthentication no" >> /etc/ssh/sshd_config

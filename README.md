@@ -1,4 +1,4 @@
-# Eliza on a DO Droplet
+# Run Eliza on a bare bones VM
 
 Disclaimer: This is a super alpha, not ready for actual production.
 
@@ -10,17 +10,19 @@ cd eliza-remote && chmod +x install.sh
 ./install.sh
 ```
 
-## Prerequisites
+## Prerequisites (currently tested on)
 
-- Digital Ocean Droplet with the latest Ubuntu LTS (currently 24.04)
+- Digital Ocean Droplet with the latest Ubuntu LTS
 - The droplet is provisioned with an ssh key that you have control over
 
 ## Features
 
 - [x] Systemd service management
 - [x] Log rotation
-- [x] Security hardening
-- [] Custom character support
+- [x] Basic security hardening
+- [ ] SSL
+- [ ] Multiple characters support
+
 
 ## Installation Options
 
@@ -115,4 +117,7 @@ ls -la /var/log/eliza
 
 ## License
 
-MIT License - see LICENSE file
+MIT License
+
+## Credit
+H/T to [HowieDuhzi](https://github.com/HowieDuhzit) for the WSL install script that inspired this fork.
