@@ -2,18 +2,24 @@
 
 Disclaimer: This is a super alpha, not ready for actual production.
 
+## Prerequisites (currently tested on)
+
+- Digital Ocean droplet with the latest Ubuntu LTS (24.04)
+- The droplet is provisioned with an ssh key that you have control over
+
 ## Quick Start
 
 ```bash
+# become root
+ssh root@your-droplet-ip -i ~/.ssh/your-private-key
+
+# clone the repo
 git clone https://github.com/bealers/eliza-remote.git
 cd eliza-remote && chmod +x install.sh
+
+# run the install script
 ./install.sh
 ```
-
-## Prerequisites (currently tested on)
-
-- Digital Ocean Droplet with the latest Ubuntu LTS
-- The droplet is provisioned with an ssh key that you have control over
 
 ## Features
 
@@ -114,14 +120,9 @@ ls -la /opt/eliza
 ls -la /var/log/eliza
 ```
 
-## Development
+## Disclaimer
 
-### TODO
-- [ ] Configuration UI
-- [ ] Backup/restore functionality
-- [ ] Monitoring integration
-- [ ] SSL/TLS automation
-- [ ] Multi-character management UI
+Yes, I could have used Docker.
 
 ## License
 

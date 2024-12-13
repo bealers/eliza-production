@@ -24,9 +24,19 @@ EOL
 chown $USER:$USER /home/$USER/.bashrc
 
 # Service user
+mkdir -p "${INSTALL_DIR}"
 if ! id "$SERVICE_USER" &>/dev/null; then
-    useradd -r -s /bin/bash -d "$INSTALL_DIR" $SERVICE_USER
+    useradd -r -s /bin/bash -d "$INSTALL_DIR" -m $SERVICE_USER
 fi
+
+# Setup service user's home
+cat > "${INSTALL_DIR}/.bashrc" << 'EOL'
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # Load NVM
+export PATH="$HOME/node_modules/.bin:$PATH"
+EOL
+chown -R $SERVICE_USER:$SERVICE_USER "${INSTALL_DIR}"
+chmod 750 "${INSTALL_DIR}"
 
 # TODO: Opsec hardening
 # WARNING: This will very likely break default Digital Ocean access methods
