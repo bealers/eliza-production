@@ -6,7 +6,7 @@ Disclaimer: This is a super alpha, not ready for actual production.
 
 ```bash
 git clone https://github.com/bealers/eliza-remote.git
-cd eliza-deploy
+cd eliza-remote && chmod +x install.sh
 ./install.sh
 ```
 

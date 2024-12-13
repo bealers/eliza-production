@@ -28,7 +28,7 @@ chown $USER:$USER /home/$USER/.bashrc
 useradd -r -m -s /bin/bash $SERVICE_USER
 
 # TODO: Optional security hardening
-# WARNING: This will break default Digital Ocean root access
+# WARNING: This will probably break default Digital Ocean root access
 # Uncomment these lines only if you're sure about your user access
 #
 # echo "PermitRootLogin no" >> /etc/ssh/sshd_config

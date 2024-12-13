@@ -1,7 +1,7 @@
 #!/bin/bash
 
 output "Installing application dependencies..."
-apt install -y python3 python3-pip ffmpeg
+apt-get -q -y install python3 python3-pip ffmpeg > /dev/null
 
 mkdir -p $INSTALL_DIR/{data,config,characters}
 mkdir -p $LOG_DIR

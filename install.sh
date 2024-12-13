@@ -4,6 +4,9 @@ set -e
 set -o pipefail
 umask 022
 
+# Prevent interactive prompts during installation
+export DEBIAN_FRONTEND=noninteractive
+
 # Output handling to STDOUT and $LOG_FILE
 output() {
     echo ">>> $1"

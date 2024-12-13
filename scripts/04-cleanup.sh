@@ -3,8 +3,8 @@
 echo "=== Cleanup and Optimization ==="
 
 # Clear package manager cache
-apt-get clean
-apt-get autoremove -y
+apt-get -qq clean > /dev/null
+apt-get -qq -y autoremove > /dev/null
 
 # Final system checks
 display_status "Checking system status..."
