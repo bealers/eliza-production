@@ -46,9 +46,9 @@ pnpm install
 echo "Setting up environment..."
 test -f .env.example && cp .env.example .env
 
-# Setup default character
+# Setup default character via symlink
 DEFAULT_CHARACTER=${ELIZA_CHARACTER:-eternalai.character.json}
-cp "characters/${DEFAULT_CHARACTER}" characters/default.character.json
+ln -sf "${INSTALL_DIR}/characters/${DEFAULT_CHARACTER}" "${INSTALL_DIR}/characters/default.character.json"
 mkdir -p data/memory/default
 
 # Verify installation
