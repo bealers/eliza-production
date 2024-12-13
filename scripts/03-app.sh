@@ -5,35 +5,44 @@ echo "Installing application dependencies..."
 apt-get -q -y install python3 python3-pip ffmpeg > /dev/null
 
 # Switch to service user for installation
-su - "${SERVICE_USER}" <<EOF
-# Install NVM
+su - "${SERVICE_USER}" <<'EOF'
+set -e  # Exit on any error
+
+echo "Installing NVM..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
-# Load NVM
-export NVM_DIR="\$HOME/.nvm"
-[ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
+# Ensure NVM is loaded
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-# Install Node.js
+echo "Installing Node.js..."
 nvm install v${NODE_VERSION}
 nvm alias default v${NODE_VERSION}
 nvm use default
 
-# Install pnpm
+echo "Installing pnpm..."
 npm install -g pnpm
 
-# Clone repository
-cd \$HOME
+echo "Cloning repository..."
+cd $HOME
 rm -rf * .[!.]* ..?*  # Clean directory except . and ..
-git clone ${AGENT_REPO} .  # Clone into current directory
-git checkout \$(git describe --tags --abbrev=0)
+git clone ${AGENT_REPO} .
+git checkout $(git describe --tags --abbrev=0)
 
-# Install dependencies
+echo "Installing dependencies..."
 pnpm install
 
-# Setup environment and character
+echo "Setting up environment..."
 test -f .env.example && cp .env.example .env
 test -f characters/eliza.character.json && cp characters/eliza.character.json characters/default.character.json
 mkdir -p data/memory/default
+
+# Verify installation
+echo "Verifying installation..."
+which node
+which pnpm
+node -v
+pnpm -v
 EOF
 
 # systemd

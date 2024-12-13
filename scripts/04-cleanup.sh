@@ -23,7 +23,7 @@ echo "   sudo systemctl restart eliza - Restart the service"
 echo "   sudo systemctl status eliza  - Check service status"
 
 echo "4. View logs with:"
-echo "   sudo journalctl -u eliza -f    - Follow logs in real-time"
+echo "   journalctl -u eliza -f    - Follow logs in real-time"
 
 echo "5. Character file is symlinked to:"
 echo "   $INSTALL_DIR/characters/default.character.json"
