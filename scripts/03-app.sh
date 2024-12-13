@@ -4,14 +4,16 @@ output "Installing application dependencies..."
 apt-get -q -y install python3 python3-pip ffmpeg > /dev/null
 
 # Setup directories
-mkdir -p "${INSTALL_DIR}"/{data,config,characters}
-mkdir -p "${LOG_DIR}"
-chown -R "${SERVICE_USER}:${SERVICE_USER}" "${INSTALL_DIR}" "${LOG_DIR}"
-chmod 755 "${INSTALL_DIR}"
-chmod 750 "${LOG_DIR}"
+mkdir -p "${INSTALL_DIR}"
+chown "${SERVICE_USER}:${SERVICE_USER}" "${INSTALL_DIR}"
 
 # Switch to service user for installation
 su - "${SERVICE_USER}" <<EOF
+# Clone repository
+git clone ${AGENT_REPO} ${INSTALL_DIR}
+cd ${INSTALL_DIR}
+git checkout \$(git describe --tags --abbrev=0)
+
 # Install NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
@@ -20,26 +22,19 @@ export NVM_DIR="\$HOME/.nvm"
 [ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
 
 # Install Node.js
-nvm install ${NODE_VERSION}
-nvm alias default ${NODE_VERSION}
+nvm install v${NODE_VERSION}
+nvm alias default v${NODE_VERSION}
 nvm use default
 
 # Install pnpm
 npm install -g pnpm
 
-# Clone repository
-cd ${INSTALL_DIR}
-git clone ${AGENT_REPO} .
-git checkout \$(git describe --tags --abbrev=0)
-
-# Setup environment
-cp .env.example .env
-
 # Install dependencies
 pnpm install
 
-# Setup default character
-cp characters/eliza.character.json characters/default.character.json
+# Setup environment and character
+test -f .env.example && cp .env.example .env
+test -f characters/eliza.character.json && cp characters/eliza.character.json characters/default.character.json
 mkdir -p data/memory/default
 EOF
 

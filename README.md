@@ -53,12 +53,20 @@ sudo systemctl start eliza
 
 ### Updates
 ```bash
-sudo systemctl stop eliza
+# Switch to service user
+sudo -i -u eliza
+
+# Update application - TODO - still figuring this bit out (database migrations, etc)
 cd /opt/eliza
-sudo -u eliza git pull
-sudo -u eliza git checkout $(git describe --tags --abbrev=0)
-sudo -u eliza pnpm install
-sudo systemctl start eliza
+git pull
+git checkout $(git describe --tags --abbrev=0)
+pnpm install
+
+# Exit back to your user
+exit
+
+# Restart service
+sudo systemctl restart eliza
 ```
 
 ### Logs
