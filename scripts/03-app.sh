@@ -12,14 +12,14 @@ echo "Installing NVM..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
 # Source NVM in the new shell
-export NVM_DIR="\$HOME/.nvm"  # Escaped $ for evaluation in su context
-[ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"  # Escaped $ for evaluation in su context
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
 # Verify NVM is working
 command -v nvm
 
 echo "Installing Node.js..."
-. \$HOME/.nvm/nvm.sh  # Escaped $ for evaluation in su context
+. $HOME/.nvm/nvm.sh
 nvm install v${NODE_VERSION}
 nvm alias default v${NODE_VERSION}
 nvm use default
@@ -29,17 +29,16 @@ node --version
 npm --version
 
 echo "Installing pnpm..."
-. \$HOME/.nvm/nvm.sh  # Escaped $ for evaluation in su context
 npm install -g pnpm
 
 # Verify pnpm is installed
 pnpm --version
 
 echo "Cloning repository..."
-cd \$HOME  # Escaped $ for evaluation in su context
+cd $HOME
 rm -rf * .[!.]* ..?*
 git clone ${AGENT_REPO} .
-git checkout \$(git describe --tags --abbrev=0)  # Escaped $ for subcommand in su context
+git checkout \$(git describe --tags --abbrev=0)  # Only escape the $() subcommand
 
 echo "Installing dependencies..."
 pnpm install
