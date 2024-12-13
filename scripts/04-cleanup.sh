@@ -7,7 +7,7 @@ apt-get -qq clean > /dev/null
 apt-get -qq -y autoremove > /dev/null
 
 # Final system checks
-output "Checking final system status..."
+echo "Checking final system status..."
 systemctl status eliza
 ufw status verbose
 

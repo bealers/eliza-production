@@ -5,21 +5,21 @@ echo "Installing application dependencies..."
 apt-get -q -y install python3 python3-pip ffmpeg > /dev/null
 
 # Switch to service user for installation
-su - "${SERVICE_USER}" <<'EOF'
+su - "${SERVICE_USER}" <<EOF
 set -e  # Exit on any error
 
 echo "Installing NVM..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
-# Need to source NVM directly from the file since this is a new shell
-export NVM_DIR="\$HOME/.nvm"
-[ -s "\$NVM_DIR/nvm.sh" ] && source "\$NVM_DIR/nvm.sh"  # This loads nvm
+# Source NVM in the new shell
+export NVM_DIR="\$HOME/.nvm"  # Escaped $ for evaluation in su context
+[ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"  # Escaped $ for evaluation in su context
 
 # Verify NVM is working
 command -v nvm
 
 echo "Installing Node.js..."
-. \$HOME/.nvm/nvm.sh  # Make extra sure NVM is loaded
+. \$HOME/.nvm/nvm.sh  # Escaped $ for evaluation in su context
 nvm install v${NODE_VERSION}
 nvm alias default v${NODE_VERSION}
 nvm use default
@@ -29,17 +29,17 @@ node --version
 npm --version
 
 echo "Installing pnpm..."
-. \$HOME/.nvm/nvm.sh  # Source again to be sure
+. \$HOME/.nvm/nvm.sh  # Escaped $ for evaluation in su context
 npm install -g pnpm
 
 # Verify pnpm is installed
 pnpm --version
 
 echo "Cloning repository..."
-cd \$HOME
-rm -rf * .[!.]* ..?*  # Clean directory except . and ..
+cd \$HOME  # Escaped $ for evaluation in su context
+rm -rf * .[!.]* ..?*
 git clone ${AGENT_REPO} .
-git checkout \$(git describe --tags --abbrev=0)
+git checkout \$(git describe --tags --abbrev=0)  # Escaped $ for subcommand in su context
 
 echo "Installing dependencies..."
 pnpm install
