@@ -2,7 +2,7 @@
 
 Disclaimer: This is a super alpha, not ready for actual production.
 
-## Prerequisites (currently tested on)
+## Prerequisites
 
 - Digital Ocean droplet with the latest Ubuntu LTS (24.04)
 - The droplet is provisioned with an ssh key that you have control over
@@ -21,27 +21,23 @@ cd eliza-remote && chmod +x install.sh
 ./install.sh
 ```
 
-## Features
+## Current Status & Known Issues
 
-- [x] Systemd service management
-- [x] Log rotation
-- [x] Basic security hardening
-- [ ] SSL
+### Working
+- User setup (maintenance and service users)
+- NVM and Node installation
+- Directory structure
+- Basic security hardening
+- Log rotation setup
+
+### TODO
+- [ ] Debug systemd service startup issues
+- [ ] Test character switching via symlinks
+- [ ] Verify all environment variables are properly set
+- [ ] Add proper error handling for failed service starts
+- [ ] Document manual startup procedure for debugging
+- [ ] SSL support
 - [ ] Multiple characters support
-
-
-## Installation Options
-
-### Standard Install
-```bash
-./install.sh
-```
-
-### Custom Character Install TODO - DOES NOT WORK YET
-```bash
-export ELIZA_CHARACTER=/path/to/character.json
-./install.sh
-```
 
 ## Post-Installation
 
@@ -62,16 +58,25 @@ sudo systemctl start eliza
 # Switch to service user
 sudo -i -u eliza
 
-# Update application - TODO - still figuring this bit out (database migrations, etc)
+# Update application
 cd /opt/eliza
 git pull
 git checkout $(git describe --tags --abbrev=0)
 pnpm install
 
-# Exit back to your user
+# Exit back to maintenance user
 exit
 
 # Restart service
+sudo systemctl restart eliza
+```
+
+### Switching Characters
+```bash
+sudo -i -u eliza
+cd /opt/eliza
+ln -sf characters/trump.character.json characters/default.character.json
+exit
 sudo systemctl restart eliza
 ```
 
@@ -84,6 +89,21 @@ sudo systemctl restart eliza
 ```bash
 sudo systemctl {start|stop|restart|status} eliza
 sudo journalctl -u eliza -f
+```
+
+### Debugging
+```bash
+# Check service status
+sudo systemctl status eliza
+
+# View logs
+sudo journalctl -u eliza -f
+
+# Try manual startup as service user
+sudo -i -u eliza
+cd /opt/eliza
+source ~/.nvm/nvm.sh
+pnpm start --characters="characters/default.character.json"
 ```
 
 ## Security
@@ -101,24 +121,6 @@ The installation includes commented instructions for:
 
 **Note:** Enabling these will break default Digital Ocean root access methods.
 See `scripts/02-users.sh` for details.
-
-## Troubleshooting
-
-1. Check service status:
-```bash
-sudo systemctl status eliza
-```
-
-2. View logs:
-```bash
-sudo journalctl -u eliza -f
-```
-
-3. Verify permissions:
-```bash
-ls -la /opt/eliza
-ls -la /var/log/eliza
-```
 
 ## Disclaimer
 
