@@ -25,7 +25,7 @@ chown $USER:$USER /home/$USER/.bashrc
 
 # Service user
 if ! id "$SERVICE_USER" &>/dev/null; then
-    useradd -r -m -s /bin/bash $SERVICE_USER
+    useradd -r -s /bin/bash -d "$INSTALL_DIR" $SERVICE_USER
 fi
 
 # TODO: Opsec hardening

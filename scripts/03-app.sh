@@ -49,7 +49,7 @@ Type=simple
 User=$SERVICE_USER
 WorkingDirectory=$INSTALL_DIR
 Environment=NODE_ENV=production
-Environment=HOME=/home/$SERVICE_USER
+Environment=HOME=$INSTALL_DIR
 
 # Security enhancements
 NoNewPrivileges=true
