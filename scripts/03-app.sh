@@ -2,7 +2,7 @@
 
 echo "Installing application dependencies..."
 
-apt-get -q -y install python3 python3-pip ffmpeg > /dev/null
+apt-get -qq -y install python3 python3-pip ffmpeg nodejs npm
 
 # Setup application directory
 echo "Setting up application directory..."
@@ -17,6 +17,11 @@ set -e
 cd "${INSTALL_DIR}"
 echo "Working directory: \$(pwd)"
 
+# Clean directory but preserve NVM
+mv .nvm /tmp/.nvm.backup || true
+rm -rf * .[!.]* ..?*
+[ -d /tmp/.nvm.backup ] && mv /tmp/.nvm.backup .nvm
+
 echo "Installing NVM..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
@@ -29,6 +34,7 @@ nvm use default
 
 npm install -g pnpm
 
+echo "Cloning repository..."
 git clone ${AGENT_REPO} .
 git checkout \$(git describe --tags --abbrev=0)
 
