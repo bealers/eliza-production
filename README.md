@@ -19,6 +19,7 @@ git clone https://github.com/bealers/eliza-remote.git
 cd eliza-remote && chmod +x install.sh
 
 # run the install script (this will take a while)
+# edit this first to set your own admin username
 ./install.sh
 ```
 
@@ -42,6 +43,11 @@ At minimum you probably want to set `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`
 **(Re)start service**
 ```bash
 sudo systemctl restart eliza
+```
+
+**Test**
+```bash
+sudo eliza-cli
 ```
 
 ## Configuration & Logs
@@ -113,11 +119,11 @@ Eliza provides two ways to interact:
 - Managed via systemd
 - External access blocked by default
 
-### 2. Utility CLI Interface (Port 3001)
+### 2. Test CLI Interface (Port 3001)
 - Run with: `eliza-cli`
 - Note: This will temporarily stop the API service
 - Type 'exit' to quit and restart the service
-- may delete this
+- may delete
 
 ## Contributing & Feedback
 

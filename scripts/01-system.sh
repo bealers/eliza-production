@@ -6,7 +6,7 @@ rm -rf "${INSTALL_DIR}"
 mkdir -p "${INSTALL_DIR}"
 mkdir -p "${LOG_DIR}"
 
-# Update system packages quietly 
+# Update system packages quietly
 apt-get -qq update
 apt-get -qq -y upgrade
 apt-get -qq -y install \

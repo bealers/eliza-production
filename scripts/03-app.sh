@@ -40,12 +40,13 @@ cp -v .env.example .env
 
 # Configure ports and interfaces
 # note: external access to port 3000 is currently blocked by the firewall
-cat > .env <<EOL
-# Interface Configuration
-HTTP_ENABLED=true
-HTTP_PORT=3000        # Main service API
-CLI_HTTP_PORT=3001    # CLI debug port
-EOL
+sed -i '1i\
+# Interface Configuration\
+HTTP_ENABLED=true\
+HTTP_PORT=3000        # Main service API\
+CLI_HTTP_PORT=3001    # CLI debug port\
+\
+' .env
 
 cd characters
 ln -svf eternalai.character.json default.character.json
