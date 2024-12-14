@@ -41,11 +41,11 @@ cp -v .env.example .env
 # Configure ports and interfaces
 # note: external access to port 3000 is currently blocked by the firewall
 sed -i '1i\
-# Interface Configuration\
-HTTP_ENABLED=true\
-HTTP_PORT=3000        # Main service API\
-CLI_HTTP_PORT=3001    # CLI debug port\
-\
+# Interface Configuration\n\
+HTTP_ENABLED=true\n\
+HTTP_PORT=3000        # Main service API\n\
+CLI_HTTP_PORT=3001    # CLI debug port\n\
+\n\
 ' .env
 
 cd characters
