@@ -11,10 +11,10 @@ export DEBIAN_FRONTEND=noninteractive
 NVM_VERSION=v0.39.1
 NODE_VERSION=23.3.0
 
-# The maintainer of this server (you?)
-USER=bealers
+# Server admin (gets root via sudo)
+USER=hiro-protagonist
 
-# The user that the agent will run as
+# The user the agent runs as
 SERVICE_USER=eliza
 
 AGENT_REPO=https://github.com/ai16z/eliza.git
