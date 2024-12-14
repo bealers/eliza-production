@@ -17,24 +17,33 @@ set -e
 cd "${INSTALL_DIR}"
 echo "Working directory: \$(pwd)"
 
+# Preserve .bashrc and .nvm if they exist
+mv .bashrc /tmp/.bashrc.backup || true
+mv .nvm /tmp/.nvm.backup || true
+
+# Clean directory
+rm -rf * .[!.]* ..?*
+
 echo "Cloning repository..."
-git clone -f ${AGENT_REPO} .
+git clone ${AGENT_REPO} .
 git checkout \$(git describe --tags --abbrev=0)
 
-# Yes, there is duplication here:
-# 1. We add NVM config to .bashrc for persistent setup
-# 2. Then we set it up in current shell to use it immediately (after we install it)
+# Restore preserved files
+mv /tmp/.bashrc.backup .bashrc || true
+mv /tmp/.nvm.backup .nvm || true
 
-## Append NVM config to bashrc
-cat > .bashrc <<'BASHRC'
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-export PATH="$HOME/node_modules/.bin:$PATH"
-BASHRC
+# Add NVM config to .bashrc for persistent setup
+echo "
+# NVM Setup
+export NVM_DIR=\"\$HOME/.nvm\"
+[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"
+export PATH=\"\$HOME/node_modules/.bin:\$PATH\"
+" >> .bashrc
 
 echo "Installing NVM..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
+# Set nvm up in current shell to use it immediately
 export NVM_DIR="\$HOME/.nvm"
 [ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
 
