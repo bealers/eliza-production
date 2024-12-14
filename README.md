@@ -26,7 +26,7 @@ cd eliza-remote && chmod +x install.sh
 
 **Open a NEW terminal**
 ```bash
-ssh hiro-protagonist@your-droplet-ip -i ~/.ssh/your-private-key
+ssh shrike@your-droplet-ip -i ~/.ssh/your-private-key
 ```
 
 If that works you can close the root terminal session, you will always log in as the maintenance user from now on.
@@ -121,7 +121,7 @@ Eliza provides two ways to interact:
 
 ## Contributing & Feedback
 
-Feedback welcome! If people find this useful I have 1000 things I could do to improve it. 
+Feedback welcome! If people find this useful I have 1000 things I could do to improve it.
 
 PRs particularly welcome around opsec.
 

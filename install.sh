@@ -12,7 +12,7 @@ NVM_VERSION=v0.39.1
 NODE_VERSION=23.3.0
 
 # Server admin (gets root via sudo)
-USER=hiro-protagonist
+USER=shrike
 
 # The user the agent runs as
 SERVICE_USER=eliza
