@@ -17,9 +17,13 @@ chmod 600 /home/$USER/.ssh/authorized_keys
 echo "$USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USER
 
 # Service user
-useradd -r -s /bin/bash -d "$INSTALL_DIR" -m $SERVICE_USER
+if ! id "$SERVICE_USER" &>/dev/null; then
+    useradd -r -s /bin/bash -d "$INSTALL_DIR" -m $SERVICE_USER
+fi
+
 chown -R $SERVICE_USER:$SERVICE_USER "${INSTALL_DIR}"
 chmod 750 "${INSTALL_DIR}"
+
 # TODO: Opsec hardening
 # WARNING: This will very likely break default Digital Ocean access methods
 #
