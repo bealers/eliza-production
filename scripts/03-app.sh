@@ -18,7 +18,22 @@ nvm use v${NODE_VERSION}
 
 # Install dependencies
 npm install -g pnpm
-pnpm install
+
+# Clean install workspace
+rm -rf node_modules
+rm -rf agent/node_modules
+rm -rf packages/*/node_modules
+
+# Install and build workspace
+pnpm install --force
+pnpm build
+
+# Link workspace packages
+cd packages/adapter-postgres
+pnpm link --global
+cd ../../agent
+pnpm link --global @ai16z/adapter-postgres
+cd ..
 
 # Setup environment
 cp -v .env.example .env
