@@ -9,63 +9,43 @@ echo "Setting up application directory..."
 mkdir -p "${INSTALL_DIR}"
 chown -R "${SERVICE_USER}:${SERVICE_USER}" "${INSTALL_DIR}"
 
-# Switch to service user for installation
-su - "${SERVICE_USER}" <<EOF
-set -e  # Exit on any error
+# Create a temporary script to run as eliza
+cat > /tmp/eliza-setup.sh <<EOF
+#!/bin/bash
+set -e
 
-cd "${INSTALL_DIR}" || exit 1
-pwd
-echo "Current directory: \$(pwd)"
+cd "${INSTALL_DIR}"
+echo "Working directory: \$(pwd)"
 
 echo "Installing NVM..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
-# Source NVM in the new shell
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+export NVM_DIR="\$HOME/.nvm"
+[ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
 
-# Verify NVM is working
-command -v nvm
-
-echo "Installing Node.js..."
-. $HOME/.nvm/nvm.sh
 nvm install v${NODE_VERSION}
 nvm alias default v${NODE_VERSION}
 nvm use default
 
-# Verify Node is working
-node --version
-npm --version
-
-echo "Installing pnpm..."
 npm install -g pnpm
 
-# Verify pnpm is installed
-pnpm --version
-
-echo "Cloning repository..."
 git clone ${AGENT_REPO} .
-[ -d .git ] || exit 1  # Verify git clone worked
 git checkout \$(git describe --tags --abbrev=0)
 
-echo "Installing dependencies..."
 pnpm install
 
-echo "Setting up environment..."
 test -f .env.example && cp .env.example .env
 
 # Setup default character via symlink
-DEFAULT_CHARACTER=${ELIZA_CHARACTER:-eternalai.character.json}
-ln -sf "${INSTALL_DIR}/characters/${DEFAULT_CHARACTER}" "${INSTALL_DIR}/characters/default.character.json"
+ln -sf "${INSTALL_DIR}/characters/eternalai.character.json" "${INSTALL_DIR}/characters/default.character.json"
 mkdir -p data/memory/default
-
-# Verify installation
-echo "Verifying installation..."
-which node
-which pnpm
-node -v
-pnpm -v
 EOF
+
+# Make it executable and run as eliza
+chmod +x /tmp/eliza-setup.sh
+chown $SERVICE_USER:$SERVICE_USER /tmp/eliza-setup.sh
+sudo -u $SERVICE_USER /tmp/eliza-setup.sh
+rm /tmp/eliza-setup.sh
 
 # systemd
 cat > /etc/systemd/system/eliza.service <<EOL
