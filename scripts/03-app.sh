@@ -57,8 +57,14 @@ pnpm install
 test -f .env.example && cp .env.example .env
 
 # Setup default character via symlink
-ln -sf "${INSTALL_DIR}/characters/eternalai.character.json" "${INSTALL_DIR}/characters/default.character.json"
-mkdir -p data/memory/default
+if [ -f "${INSTALL_DIR}/characters/eternalai.character.json" ]; then
+    ln -sf "${INSTALL_DIR}/characters/eternalai.character.json" "${INSTALL_DIR}/characters/default.character.json"
+else
+    echo "Warning: Default character file not found!"
+    ls -la "${INSTALL_DIR}/characters/"
+fi
+mkdir -p "${INSTALL_DIR}/data/memory/default"
+chmod 750 "${INSTALL_DIR}/data"
 EOF
 
 # Make it executable and run as eliza
@@ -80,12 +86,10 @@ WorkingDirectory=$INSTALL_DIR
 Environment=NODE_ENV=production
 Environment=HOME=$INSTALL_DIR
 
-# Security enhancements - reduced restrictions
+# Reduced security restrictions to fix mounting issues
 NoNewPrivileges=true
-ProtectSystem=strict
-ProtectHome=read-only
+ProtectSystem=full
 PrivateTmp=true
-ReadWritePaths=$LOG_DIR $INSTALL_DIR/data
 
 ExecStart=/bin/bash -c 'source ~/.nvm/nvm.sh && pnpm start --characters="characters/default.character.json"'
 Restart=always
