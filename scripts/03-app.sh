@@ -4,9 +4,18 @@ echo "Installing application dependencies..."
 
 apt-get -q -y install python3 python3-pip ffmpeg > /dev/null
 
+# Setup application directory
+echo "Setting up application directory..."
+mkdir -p "${INSTALL_DIR}"
+chown -R "${SERVICE_USER}:${SERVICE_USER}" "${INSTALL_DIR}"
+
 # Switch to service user for installation
 su - "${SERVICE_USER}" <<EOF
 set -e  # Exit on any error
+
+cd "${INSTALL_DIR}" || exit 1
+pwd
+echo "Current directory: \$(pwd)"
 
 echo "Installing NVM..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
@@ -35,10 +44,9 @@ npm install -g pnpm
 pnpm --version
 
 echo "Cloning repository..."
-cd $HOME
-rm -rf * .[!.]* ..?*
 git clone ${AGENT_REPO} .
-git checkout \$(git describe --tags --abbrev=0)  # Only escape the $() subcommand
+[ -d .git ] || exit 1  # Verify git clone worked
+git checkout \$(git describe --tags --abbrev=0)
 
 echo "Installing dependencies..."
 pnpm install
@@ -72,16 +80,11 @@ WorkingDirectory=$INSTALL_DIR
 Environment=NODE_ENV=production
 Environment=HOME=$INSTALL_DIR
 
-# Security enhancements
+# Security enhancements - reduced restrictions
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=read-only
 PrivateTmp=true
-PrivateDevices=true
-ProtectKernelTunables=true
-ProtectControlGroups=true
-RestrictAddressFamilies=AF_INET AF_INET6
-RestrictNamespaces=true
 ReadWritePaths=$LOG_DIR $INSTALL_DIR/data
 
 ExecStart=/bin/bash -c 'source ~/.nvm/nvm.sh && pnpm start --characters="characters/default.character.json"'
