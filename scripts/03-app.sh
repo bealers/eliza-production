@@ -22,7 +22,9 @@ pnpm install
 
 # Setup environment
 cp -v .env.example .env
-ln -svf characters/eternalai.character.json characters/default.character.json
+cd characters
+ln -svf eternalai.character.json default.character.json
+cd ..
 mkdir -p data/memory/default
 chmod 750 data
 EOF
@@ -40,11 +42,19 @@ WorkingDirectory=$INSTALL_DIR
 Environment=NODE_ENV=production
 Environment=HOME=$INSTALL_DIR
 
-ExecStart=/bin/bash -c 'source ~/.nvm/nvm.sh && pnpm start --characters="characters/default.character.json"'
-Restart=always
-RestartSec=5
+# Add debug output
 StandardOutput=append:$LOG_DIR/eliza.log
 StandardError=append:$LOG_DIR/eliza-error.log
+
+ExecStart=/bin/bash -c '\
+    source ~/.nvm/nvm.sh && \
+    echo "Node version: \$(node -v)" && \
+    echo "PWD: \$(pwd)" && \
+    echo "Starting Eliza..." && \
+    pnpm start --characters="characters/default.character.json"'
+
+Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
