@@ -17,8 +17,14 @@ set -e
 cd "${INSTALL_DIR}"
 echo "Working directory: \$(pwd)"
 
-# Start fresh
-rm -rf * .[!.]* ..?*
+# Append NVM config to bashrc
+cat >> .bashrc <<'BASHRC'
+
+# NVM Setup
+export NVM_DIR="\$HOME/.nvm"
+[ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"  # Load NVM
+export PATH="\$HOME/node_modules/.bin:\$PATH"
+BASHRC
 
 echo "Cloning repository..."
 git clone ${AGENT_REPO} .

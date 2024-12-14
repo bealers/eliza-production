@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Clean and prepare install directory
+rm -rf "${INSTALL_DIR}"
+mkdir -p "${INSTALL_DIR}"
+mkdir -p "${LOG_DIR}"
+
 # Update system packages quietly
 echo "Updating system packages..."
 apt-get -qq update
