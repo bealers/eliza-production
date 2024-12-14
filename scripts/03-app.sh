@@ -17,9 +17,6 @@ set -e
 cd "${INSTALL_DIR}"
 echo "Working directory: \$(pwd)"
 
-# Backup any existing NVM installation
-[ -d .nvm ] && mv .nvm /tmp/.nvm.backup
-
 # Start fresh
 rm -rf * .[!.]* ..?*
 
@@ -30,9 +27,7 @@ git checkout \$(git describe --tags --abbrev=0)
 echo "Installing NVM..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
 
-# Restore NVM if we had a backup, otherwise use fresh install
-[ -d /tmp/.nvm.backup ] && rm -rf .nvm && mv /tmp/.nvm.backup .nvm
-
+# Setup NVM in current shell
 export NVM_DIR="\$HOME/.nvm"
 [ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
 
