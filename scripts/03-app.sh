@@ -17,13 +17,21 @@ set -e
 cd "${INSTALL_DIR}"
 echo "Working directory: \$(pwd)"
 
-# Clean directory but preserve NVM
-mv .nvm /tmp/.nvm.backup || true
+# Backup any existing NVM installation
+[ -d .nvm ] && mv .nvm /tmp/.nvm.backup
+
+# Start fresh
 rm -rf * .[!.]* ..?*
-[ -d /tmp/.nvm.backup ] && mv /tmp/.nvm.backup .nvm
+
+echo "Cloning repository..."
+git clone ${AGENT_REPO} .
+git checkout \$(git describe --tags --abbrev=0)
 
 echo "Installing NVM..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh | bash
+
+# Restore NVM if we had a backup, otherwise use fresh install
+[ -d /tmp/.nvm.backup ] && rm -rf .nvm && mv /tmp/.nvm.backup .nvm
 
 export NVM_DIR="\$HOME/.nvm"
 [ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
@@ -33,11 +41,6 @@ nvm alias default v${NODE_VERSION}
 nvm use default
 
 npm install -g pnpm
-
-echo "Cloning repository..."
-git clone ${AGENT_REPO} .
-git checkout \$(git describe --tags --abbrev=0)
-
 pnpm install
 
 test -f .env.example && cp .env.example .env
@@ -51,7 +54,7 @@ EOF
 chmod +x /tmp/eliza-setup.sh
 chown $SERVICE_USER:$SERVICE_USER /tmp/eliza-setup.sh
 sudo -u $SERVICE_USER /tmp/eliza-setup.sh
-rm /tmp/eliza-setup.sh
+#rm /tmp/eliza-setup.sh
 
 # systemd
 cat > /etc/systemd/system/eliza.service <<EOL
