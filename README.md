@@ -1,77 +1,78 @@
-# Run Eliza on a bare bones VM
+# Run Eliza on a Digital Ocean Droplet
 
-Disclaimer: This is a super alpha, not ready for actual production.
-
-## Prerequisites
-
-- Digital Ocean droplet with the latest Ubuntu LTS (24.04)
-- The droplet is provisioned with an ssh key that you have control over
+Disclaimer: Needs peer review before safely using in production.
 
 ## Quick Start
 
+Create a new Digital Ocean droplet (tested on the cheapest dedicated CPU they do).
+
+**Make sure to add an ssh key to the droplet via the UI and choose the LTS version of Ubuntu (24.04).**
+
+
 ```bash
-# become root
+# become root (this is the only time you'll be doing this)
 ssh root@your-droplet-ip -i ~/.ssh/your-private-key
 
-# clone the repo
+# clone this repo
 git clone https://github.com/bealers/eliza-remote.git
 cd eliza-remote && chmod +x install.sh
 
-# run the install script
+# run the install script (this will take a while)
 ./install.sh
 ```
 
-## Current Status & Known Issues
-
-### Working
-- User setup (maintenance and service users)
-- NVM and Node installation
-- Directory structure
-- Basic security hardening
-- Log rotation setup
-
-### TODO
-- [ ] Debug systemd service startup issues
-- [ ] Test character switching via symlinks
-- [ ] Verify all environment variables are properly set
-- [ ] Add proper error handling for failed service starts
-- [ ] Document manual startup procedure for debugging
-- [ ] SSL support
-- [ ] Multiple characters support
-
 ## Post-Installation
 
-1. Configure `.env` file:
+**Open a new terminal**
+```bash
+ssh your-username@your-droplet-ip -i ~/.ssh/your-private-key
+```
+
+If that works you can close the root terminal session.
+
+From your new terminal session, you can now configure the service:
+
+1. Configure environment:
 ```bash
 sudo vi /opt/eliza/.env
 ```
+At minimum you probably want to set `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`
 
-2. Start the service:
+2. (re)start service:
 ```bash
-sudo systemctl start eliza
+sudo systemctl restart eliza
+```
+
+## Configuration & Logs
+
+### Files
+- `.env`: Main configuration
+- `characters/default.character.json`: Active character
+- `/var/log/eliza/`: Log directory
+  - `eliza.log`: Application logs
+  - `eliza-error.log`: Error logs
+  - `install.log`: Installation logs (can be deleted)
+
+### Service Control
+```bash
+sudo systemctl {start|stop|restart|status} eliza
+sudo journalctl -u eliza -f
 ```
 
 ## Maintenance
 
-### Updates
+### Updates (Untested)
 ```bash
-# Switch to service user
 sudo -i -u eliza
-
-# Update application
 cd /opt/eliza
 git pull
 git checkout $(git describe --tags --abbrev=0)
 pnpm install
-
-# Exit back to maintenance user
 exit
-
-# Restart service
 sudo systemctl restart eliza
 ```
 
-### Switching Characters
+### Character Switching (UNTESTED)
 ```bash
 sudo -i -u eliza
 cd /opt/eliza
@@ -80,51 +81,44 @@ exit
 sudo systemctl restart eliza
 ```
 
-### Logs
-- Application: `/var/log/eliza/eliza.log`
-- Errors: `/var/log/eliza/eliza-error.log`
-- Installation: `/var/log/eliza/install.log`
+## Current Status
 
-### Service Control
-```bash
-sudo systemctl {start|stop|restart|status} eliza
-sudo journalctl -u eliza -f
-```
+### Working
+- User setup (maintenance and service user)
+- All app dependencies (NVM, Node, pnpm)
+- Eliza build with workspace support
+- Basic security hardening
+- Log rotation and management
+- CLI interface for testing
+- HTTP API (port 3000, firewalled by default)
 
-### Debugging
-```bash
-# Check service status
-sudo systemctl status eliza
+### TODO
+- [ ] Test character switching via symlinks
+- [ ] SSL support
+- [ ] Multiple characters support
 
-# View logs
-sudo journalctl -u eliza -f
+## Interfaces
 
-# Try manual startup as service user
-sudo -i -u eliza
-cd /opt/eliza
-source ~/.nvm/nvm.sh
-pnpm start --characters="characters/default.character.json"
-```
+Eliza provides two ways to interact:
 
-## Security
+### 1. API Service (Port 3000)
+- Runs as a system service
+- RESTful API endpoints
+- Suitable for web interfaces/integrations
+- Managed via systemd
+- External access blocked by default
 
-- Dedicated service user
-- Systemd security policies
-- Restricted file permissions
-- UFW firewall configuration
+### 2. CLI Interface (Port 3001)
+- Interactive terminal chat
+- Great for testing and debugging
+- Run with: `eliza-cli`
+- Cannot run while service uses same port
 
-### Optional Hardening
-The installation includes commented instructions for:
-- Disabling root SSH access
-- Disabling password authentication
-- Locking root account
+## Contributing & Feedback
 
-**Note:** Enabling these will break default Digital Ocean root access methods.
-See `scripts/02-users.sh` for details.
+Feedback welcome! If people find this useful I have 1000 things I could do to improve it.
 
-## Disclaimer
-
-Yes, I could have used Docker.
+PRs particularly welcome around opsec.
 
 ## License
 

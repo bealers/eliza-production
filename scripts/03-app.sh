@@ -37,6 +37,16 @@ cd ..
 
 # Setup environment
 cp -v .env.example .env
+
+# Configure ports and interfaces
+# note: external access to port 3000 is currently blocked by the firewall
+cat > .env <<EOL
+# Interface Configuration
+HTTP_ENABLED=true
+HTTP_PORT=3000        # Main service API
+CLI_HTTP_PORT=3001    # CLI debug port
+EOL
+
 cd characters
 ln -svf eternalai.character.json default.character.json
 cd ..
@@ -56,6 +66,7 @@ User=$SERVICE_USER
 WorkingDirectory=$INSTALL_DIR
 Environment=NODE_ENV=production
 Environment=HOME=$INSTALL_DIR
+Environment=HTTP_PORT=3000
 
 # Add debug output
 StandardOutput=append:$LOG_DIR/eliza.log
@@ -65,7 +76,7 @@ ExecStart=/bin/bash -c '\
     source ~/.nvm/nvm.sh && \
     echo "Node version: \$(node -v)" && \
     echo "PWD: \$(pwd)" && \
-    echo "Starting Eliza..." && \
+    echo "Starting Eliza API on port 3000..." && \
     pnpm start --characters="characters/default.character.json"'
 
 Restart=always
