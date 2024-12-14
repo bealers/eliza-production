@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Clean and prepare install directory
 rm -rf "${INSTALL_DIR}"
@@ -6,18 +7,19 @@ mkdir -p "${INSTALL_DIR}"
 mkdir -p "${LOG_DIR}"
 
 # Update system packages quietly
-echo "Updating system packages..."
 apt-get -qq update
 apt-get -qq -y upgrade
-
-apt-get -q -y install \
+apt-get -qq -y install \
     vim \
     curl \
     git \
     unzip \
     zip \
     ntp \
-    ufw
+    ufw \
+    python3 \
+    python3-pip \
+    ffmpeg
 
 # Configure firewall
 ufw default deny incoming
