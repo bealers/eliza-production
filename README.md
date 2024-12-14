@@ -1,6 +1,6 @@
-# Run Eliza on a Digital Ocean Droplet
+# Run [Eliza](https://github.com/ai16z/eliza) on a Digital Ocean Droplet
 
-Disclaimer: Needs peer review before safely using in production.
+Warning: These provisioning scripts are in an early alpha, works-for-me state. They need peer review before safely using in production.
 
 ## Quick Start
 
@@ -8,6 +8,7 @@ Create a new Digital Ocean droplet (tested on the cheapest dedicated CPU they do
 
 **Make sure to add an ssh key to the droplet via the UI and choose the LTS version of Ubuntu (24.04).**
 
+When the droplet is ready, you can ssh into it as root.
 
 ```bash
 # become root (this is the only time you'll be doing this)
@@ -28,17 +29,17 @@ cd eliza-remote && chmod +x install.sh
 ssh your-username@your-droplet-ip -i ~/.ssh/your-private-key
 ```
 
-If that works you can close the root terminal session.
+If that works you can close the root terminal session, you will always log in as the maintenance user from now on.
 
-From your new terminal session, you can now configure the service:
+From your new terminal session, you can now configure Eliza.
 
-1. Configure environment:
+**Configure .env**
 ```bash
 sudo vi /opt/eliza/.env
 ```
 At minimum you probably want to set `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`
 
-2. (re)start service:
+**(Re)start service**
 ```bash
 sudo systemctl restart eliza
 ```
@@ -56,6 +57,10 @@ sudo systemctl restart eliza
 ### Service Control
 ```bash
 sudo systemctl {start|stop|restart|status} eliza
+```
+
+### View Logs in realtime
+```bash
 sudo journalctl -u eliza -f
 ```
 
@@ -108,11 +113,11 @@ Eliza provides two ways to interact:
 - Managed via systemd
 - External access blocked by default
 
-### 2. CLI Interface (Port 3001)
-- Interactive terminal chat
-- Great for testing and debugging
+### 2. Utility CLI Interface (Port 3001)
 - Run with: `eliza-cli`
-- Cannot run while service uses same port
+- Note: This will temporarily stop the API service
+- Type 'exit' to quit and restart the service
+- may delete this
 
 ## Contributing & Feedback
 
